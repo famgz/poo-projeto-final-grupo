@@ -1,7 +1,15 @@
 import { BancoDeDados } from './bancoDeDados';
 import { Pessoa } from './pessoa';
 
-class Menu {}
+class Menu {
+  private _menu = [
+    'Listar pessoas',
+    'Adicionar pessoa',
+    'Atualizar pessoa',
+    'Buscar pelo nome',
+    'Deletar pessoa',
+  ];
+}
 
 const menu = new Menu();
 
