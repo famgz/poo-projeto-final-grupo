@@ -12,6 +12,6 @@ Menu;
 
 Ana Westhpal: [@anawesthpal](https://github.com/anawesthpal)
 
-João: [@jsaraivasapori](https://github.com/jsaraivasapori)
+João Saraiva: [@jsaraivasapori](https://github.com/jsaraivasapori)
 
-Fillipe: [@famgz](https://github.com/famgz)
+Fillipe Miranda: [@famgz](https://github.com/famgz)
