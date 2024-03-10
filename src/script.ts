@@ -1,22 +1,14 @@
 import { BancoDeDados } from './bancoDeDados';
 import { Pessoa } from './pessoa';
+import { Menu } from "./menu"
 
-class Menu {
-  private _menu = [
-    'Listar pessoas',
-    'Adicionar pessoa',
-    'Atualizar pessoa',
-    'Buscar pelo nome',
-    'Deletar pessoa',
-  ];
-}
 
 const menu = new Menu();
+menu.exibirMenu()
+// const bancoDados = new BancoDeDados();
 
-const bancoDados = new BancoDeDados();
+// const pessoa1 = new Pessoa('Carlos', 23, 'carlos@email.com');
 
-const pessoa1 = new Pessoa('Carlos', 23, 'carlos@email.com');
+// bancoDados.adicionar(pessoa1);
 
-bancoDados.adicionar(pessoa1);
-
-bancoDados.listar();
+// bancoDados.listar();
