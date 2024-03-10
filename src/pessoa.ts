@@ -1,7 +1,7 @@
 export class Pessoa {
-  _nome: string;
-  _idade: number;
-  _email: string;
+  private _nome: string;
+  private _idade: number;
+  private _email: string;
 
   constructor(nome: string, idade: number, email: string) {
     if (this.nomeInvalido(nome)) {
