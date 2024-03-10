@@ -16,6 +16,7 @@ export class BancoDeDados {
       return false;
     }
     this._listaDePessoas.push(pessoa);
+    console.log(`Pessoa ${pessoa.nome} adicionada com sucesso!`);
     return true;
   }
 
@@ -23,8 +24,14 @@ export class BancoDeDados {
     console.log(this._listaDePessoas);
   }
 
-  buscarPeloNome(nome: string): Pessoa {
-    return this._listaDePessoas[0];
+  buscarPeloNome(nome: string): Pessoa | undefined {
+    const pessoa = this._listaDePessoas.find(
+      (pessoa) => pessoa.nome.toLowerCase() === nome.toLowerCase()
+    );
+    if (!pessoa) {
+      console.error(`Pessoa ${nome} não encontrada`);
+    }
+    return pessoa;
   }
 
   atualizar(pessoa: Pessoa): boolean {
