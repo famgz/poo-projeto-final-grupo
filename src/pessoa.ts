@@ -5,7 +5,7 @@ export class Pessoa {
 
   constructor(nome: string, idade: number, email: string) {
     if (this.nomeInvalido(nome)) {
-      throw new Error('Nome inválido');
+      throw new Error(`Nome inválido: ${nome}`);
     }
     this._nome = nome;
     this._idade = idade;
