@@ -31,4 +31,4 @@ const pessoa7 = new Pessoa('Lucas', 29, 'lucas@email.com');
 bancoDados.adicionar(pessoa7);
 
 
- bancoDados.listar();
+ console.log(bancoDados.buscarPeloNome("Lucas"));

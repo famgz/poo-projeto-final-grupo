@@ -20,17 +20,21 @@ export class BancoDeDados {
     return true;
   }
 
-  listar(): void {
-    console.log(this._listaDePessoas);
+  listar(){
+    console.log(
+    `Pessoas cadastradas:
+    ${this._listaDePessoas}`);
   }
 
   buscarPeloNome(nome: string): Pessoa | undefined {
     const pessoa = this._listaDePessoas.find(
-      (pessoa) => pessoa.nome.toLowerCase() === nome.toLowerCase()
+      (alvo) => alvo.nome.toLowerCase() === nome.toLowerCase()
     );
     if (!pessoa) {
-      console.error(`Pessoa ${nome} não encontrada`);
+      throw Error(`\nPessoa ${nome} não encontrada`);
     }
+    console.log(`\nEncontrado pessoa com nome ${nome}. Imprimindo dados do cadastro..:`);
+    
     return pessoa;
   }
 
@@ -41,5 +45,6 @@ export class BancoDeDados {
   deletar(pessoa: Pessoa): boolean {
     return true;
   }
+
 
 }
