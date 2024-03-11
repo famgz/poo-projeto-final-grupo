@@ -10,6 +10,8 @@ const bancoDados = new BancoDeDados();
 
 runSeed(bancoDados);
 
+bancoDados.listar();
+
 console.log(bancoDados.buscarPeloNome('Lucas'));
 
 // menu.exibirMenu();
