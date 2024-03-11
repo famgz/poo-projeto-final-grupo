@@ -1,7 +1,7 @@
 import promptSync from 'prompt-sync';
 import { BancoDeDados } from './bancoDeDados';
-const bancoDados = new BancoDeDados
-
+import { Pessoa} from "./pessoa"
+const bancoDados = new BancoDeDados()
 
 export class Menu{
 
@@ -46,15 +46,20 @@ exibirMenu (){
     switch(escolha){
 
       case 1:
-      console.log("BancoDeDados.adcionar()");
+        const nome = prompt("Informe o nome: ")
+        const idade =Number(prompt("Informe a idade: "))
+        const email =prompt("Informe o email: ")
+        const pessoa = new Pessoa(nome,idade,email)
+        bancoDados.adicionar(pessoa)
       break
 
       case 2:
-      console.log("BancoDeDados.listar()");
+      bancoDados.listar();
       break
 
       case 3:
-      console.log("BancoDeDados.buscarPeloNome()");
+      const buscarNome : string = prompt("Informe o nome.: ")
+      bancoDados.buscarPeloNome(buscarNome);
       break
 
       case 4:
@@ -72,4 +77,6 @@ exibirMenu (){
     prompt('Aperte ENTER para voltar ao menu');
   }
 }
+
+
 }

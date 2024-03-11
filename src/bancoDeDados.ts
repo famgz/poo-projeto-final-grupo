@@ -22,6 +22,7 @@ export class BancoDeDados {
   }
 
   adicionar(pessoa: Pessoa): boolean {
+    
     const pessoaExiste = this._buscarPeloNome(pessoa.nome);
     if (pessoaExiste) {
       console.error(`${pessoa} já existe`);

@@ -4,7 +4,7 @@ import { Menu } from './menu';
 import { runSeed } from './seed';
 
 const menu = new Menu();
-// menu.exibirMenu()
+menu.exibirMenu()
 
 const bancoDados = new BancoDeDados();
 
