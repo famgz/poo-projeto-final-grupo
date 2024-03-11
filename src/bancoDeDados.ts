@@ -13,6 +13,14 @@ export class BancoDeDados {
     );
   }
 
+  private _obterIndicePessoa(pessoa: Pessoa): number {
+    const index = this._listaDePessoas.indexOf(pessoa);
+    if (index === -1) {
+      console.error(`\nPessoa "${pessoa.nome}" não encontrada`);
+    }
+    return index;
+  }
+
   adicionar(pessoa: Pessoa): boolean {
     const pessoaExiste = this._buscarPeloNome(pessoa.nome);
     if (pessoaExiste) {
@@ -47,9 +55,9 @@ export class BancoDeDados {
   }
 
   atualizar(pessoa: Pessoa): boolean {
-    const index = this._listaDePessoas.indexOf(pessoa);
-    if (index === -1) {
-      console.error(`\nPessoa "${pessoa.nome}" não encontrada`);
+    const index = this._obterIndicePessoa(pessoa);
+    if (!index) {
+      console.error('Atualização não executada');
       return false;
     }
     this._listaDePessoas[index] = pessoa;
@@ -57,9 +65,9 @@ export class BancoDeDados {
   }
 
   deletar(pessoa: Pessoa): boolean {
-    const index = this._listaDePessoas.indexOf(pessoa);
-    if (index === -1) {
-      console.error(`\nPessoa "${pessoa.nome}" não encontrada`);
+    const index = this._obterIndicePessoa(pessoa);
+    if (!index) {
+      console.error('Exclusão não executada');
       return false;
     }
     delete this._listaDePessoas[index];
