@@ -16,6 +16,7 @@ export class Menu extends ListaMenu{
     
 
   }
+
   
 
   exibirMenu () : void{
@@ -47,37 +48,55 @@ export class Menu extends ListaMenu{
       switch(escolha){
 
         case 1:
+
           const nome = prompt("Informe o nome: ")
           const idade =Number(prompt("Informe a idade: "))
           const email =prompt("Informe o email: ")
           const pessoa = new Pessoa(nome,idade,email)
           this._bancoDeDados.adicionar(pessoa)
+
         break
 
         case 2:
-        this._bancoDeDados.listar();
-        break
+          this._bancoDeDados.listar();
+
+          break
 
         case 3:
-        const buscarNome : string = prompt("Informe o nome.: ")
-        this._bancoDeDados.buscarPeloNome(buscarNome);
-        break
+          const buscarNome : string = prompt("Informe o nome.: ")
+          this._bancoDeDados.buscarPeloNome(buscarNome);
+          break
 
         case 4:
-        console.log("BancoDeDados.atualizar()");
-        break
+      
+          const pessoaAtualizar = this._bancoDeDados.buscarPorId(this.pedirId())
+          this._bancoDeDados.atualizar(pessoaAtualizar);
+
+          break
 
         case 5:
-        console.log("BancoDeDados.deletar()")
-        break
+          
+          const pessoaDeletar = this._bancoDeDados.buscarPorId(this.pedirId())
+          this._bancoDeDados.atualizar(pessoaDeletar);
+        
+          break
       
-        // default:
-        //   throw Error("Erro interno. problema em chamar os métodos, reveja o switch")
+        default:
+          throw Error("Erro interno. problema em chamar os métodos, reveja o switch")
         
       }
       prompt('Aperte ENTER para voltar ao menu');
     }
   }
 
+  private pedirId(): number{
+    console.log(`Usuário cadastrados:\n`);
+    this._bancoDeDados.listar()
+    const entrada : number = Number(prompt("Informe o Id"))
+    return entrada
+}
+
 
 }
+
+

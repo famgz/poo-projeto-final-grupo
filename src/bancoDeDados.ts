@@ -21,11 +21,11 @@ export class BancoDeDados {
     return index;
   }
 
-  private buscarPorId(id : number) : Pessoa | undefined{
+   buscarPorId(id : number) : Pessoa {
   
     if(id < 0){
-      console.error("Indice inválido")
-      return
+      throw Error("Indice inválido")
+      
     }
     const pessoa =  this._listaDePessoas[id]
     return pessoa
