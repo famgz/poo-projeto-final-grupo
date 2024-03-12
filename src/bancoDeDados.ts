@@ -21,6 +21,16 @@ export class BancoDeDados {
     return index;
   }
 
+  private buscarPorId(id : number) : Pessoa | undefined{
+  
+    if(id < 0){
+      console.error("Indice inválido")
+      return
+    }
+    const pessoa =  this._listaDePessoas[id]
+    return pessoa
+  }
+
   adicionar(pessoa: Pessoa): boolean {
     
     const pessoaExiste = this._buscarPeloNome(pessoa.nome);
