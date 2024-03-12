@@ -21,18 +21,15 @@ export class BancoDeDados {
     return index;
   }
 
-   buscarPorId(id : number) : Pessoa {
-  
-    if(id < 0){
-      throw Error("Indice inválido")
-      
+  buscarPorId(id: number): Pessoa {
+    if (id < 0) {
+      throw Error('Indice inválido');
     }
-    const pessoa =  this._listaDePessoas[id]
-    return pessoa
+    const pessoa = this._listaDePessoas[id];
+    return pessoa;
   }
 
   adicionar(pessoa: Pessoa): boolean {
-    
     const pessoaExiste = this._buscarPeloNome(pessoa.nome);
     if (pessoaExiste) {
       console.error(`${pessoa} já existe`);
@@ -81,7 +78,7 @@ export class BancoDeDados {
       console.error('Exclusão não executada');
       return false;
     }
-    delete this._listaDePessoas[index];
+    this._listaDePessoas.splice(index, 1);
     return true;
   }
 }
