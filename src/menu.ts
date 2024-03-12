@@ -1,10 +1,17 @@
 import promptSync from 'prompt-sync';
 import { BancoDeDados } from './bancoDeDados';
 import { Pessoa} from "./pessoa"
-const bancoDados = new BancoDeDados()
+
 
 export class Menu{
 
+  private _bancoDeDados : BancoDeDados
+  
+  constructor(bancoDeDados: BancoDeDados){
+    this._bancoDeDados = bancoDeDados
+  
+
+  }
   private mostrarMenu() : string{
     
     return `
@@ -17,66 +24,66 @@ export class Menu{
 
   }
 
-exibirMenu (){
-  while (true){
-    let escolha :null| number = null
-    const prompt = promptSync()
+  exibirMenu (){
+    while (true){
+      let escolha :null| number = null
+      const prompt = promptSync()
 
-    do{
-      console.clear()
-      console.log(this.mostrarMenu())
-      console.log();
+      do{
+        console.clear()
+        console.log(this.mostrarMenu())
+        console.log();
+        
+        escolha = Number(prompt("Escolhe uma opção. Digite 0 caso queira sair: ".trim()))
       
-      escolha = Number(prompt("Escolhe uma opção. Digite 0 caso queira sair: ".trim()))
-     
-      
-      if (escolha > 5 || escolha < 1){
-        continue
+        
+        if (escolha > 5 || escolha < 1){
+          continue
+        }
+        if (isNaN(escolha)){
+          continue
+        }
+
+      }while(escolha === null)
+
+      if (escolha === 0){
+        return
       }
-      if (isNaN(escolha)){
-        continue
-      }
 
-    }while(escolha === null)
+      switch(escolha){
 
-    if (escolha === 0){
-      return
-    }
+        case 1:
+          const nome = prompt("Informe o nome: ")
+          const idade =Number(prompt("Informe a idade: "))
+          const email =prompt("Informe o email: ")
+          const pessoa = new Pessoa(nome,idade,email)
+          this._bancoDeDados.adicionar(pessoa)
+        break
 
-    switch(escolha){
+        case 2:
+        this._bancoDeDados.listar();
+        break
 
-      case 1:
-        const nome = prompt("Informe o nome: ")
-        const idade =Number(prompt("Informe a idade: "))
-        const email =prompt("Informe o email: ")
-        const pessoa = new Pessoa(nome,idade,email)
-        bancoDados.adicionar(pessoa)
-      break
+        case 3:
+        const buscarNome : string = prompt("Informe o nome.: ")
+        this._bancoDeDados.buscarPeloNome(buscarNome);
+        break
 
-      case 2:
-      bancoDados.listar();
-      break
+        case 4:
+        console.log("BancoDeDados.atualizar()");
+        break
 
-      case 3:
-      const buscarNome : string = prompt("Informe o nome.: ")
-      bancoDados.buscarPeloNome(buscarNome);
-      break
-
-      case 4:
-      console.log("BancoDeDados.atualizar()");
-      break
-
-      case 5:
-      console.log("BancoDeDados.deletar()")
-      break
-    
-      // default:
-      //   throw Error("Erro interno. problema em chamar os métodos, reveja o switch")
+        case 5:
+        console.log("BancoDeDados.deletar()")
+        break
       
+        // default:
+        //   throw Error("Erro interno. problema em chamar os métodos, reveja o switch")
+        
+      }
+      prompt('Aperte ENTER para voltar ao menu');
     }
-    prompt('Aperte ENTER para voltar ao menu');
   }
-}
 
 
 }

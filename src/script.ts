@@ -1,9 +1,11 @@
 import { BancoDeDados } from './bancoDeDados';
 import { Menu } from './menu';
 
-const menu = new Menu();
+
+const bancoDeDados = new BancoDeDados();
+const menu = new Menu(bancoDeDados);
 // menu.exibirMenu()
 
-const bancoDados = new BancoDeDados();
+
 
 menu.exibirMenu();
