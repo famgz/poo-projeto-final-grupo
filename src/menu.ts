@@ -1,37 +1,31 @@
 import promptSync from 'prompt-sync';
 import { BancoDeDados } from './bancoDeDados';
 import { Pessoa} from "./pessoa"
+import { ListaMenu} from "./listaMenu"
 
 
-export class Menu{
+
+
+export class Menu extends ListaMenu{
 
   private _bancoDeDados : BancoDeDados
   
   constructor(bancoDeDados: BancoDeDados){
+    super();
     this._bancoDeDados = bancoDeDados
+    
+
+  }
   
 
-  }
-  private mostrarMenu() : string{
-    
-    return `
-    1 - Adicionar 
-    2 - Listar
-    3 - Buscar pelo nome 
-    4 - Atualizar 
-    5 - Deletar 
-    `
-
-  }
-
-  exibirMenu (){
+  exibirMenu () : void{
     while (true){
       let escolha :null| number = null
       const prompt = promptSync()
 
       do{
         console.clear()
-        console.log(this.mostrarMenu())
+        this.mostrarMenu()
         console.log();
         
         escolha = Number(prompt("Escolhe uma opção. Digite 0 caso queira sair: ".trim()))
