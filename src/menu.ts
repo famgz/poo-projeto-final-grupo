@@ -68,16 +68,15 @@ export class Menu extends ListaMenu{
           break
 
         case 4:
-      
-          const pessoaAtualizar = this._bancoDeDados.buscarPorId(this.pedirId())
-          this._bancoDeDados.atualizar(pessoaAtualizar);
+          this._bancoDeDados.buscarPorId(this.pedirId())
+          this._bancoDeDados.atualizar(this.pedirDadosAtualizar());
 
           break
 
         case 5:
           
           const pessoaDeletar = this._bancoDeDados.buscarPorId(this.pedirId())
-          this._bancoDeDados.atualizar(pessoaDeletar);
+          this._bancoDeDados.deletar(pessoaDeletar);
         
           break
       
@@ -90,10 +89,24 @@ export class Menu extends ListaMenu{
   }
 
   private pedirId(): number{
+    const prompt = promptSync()
     console.log(`Usuário cadastrados:\n`);
     this._bancoDeDados.listar()
-    const entrada : number = Number(prompt("Informe o Id"))
+    const entrada = Number(prompt("Informe o Id"))
     return entrada
+}
+
+
+private pedirDadosAtualizar():Pessoa{
+  const prompt = promptSync()
+  const novoNome : string = String(prompt("Informe o novo nome"))
+  const novaIdade : number = Number(prompt("Informe a nova idade"))
+  const novoEmail : string  = String(prompt("Informe o novo email"))
+  return new Pessoa(novoNome,novaIdade,novoEmail)
+
+
+
+
 }
 
 

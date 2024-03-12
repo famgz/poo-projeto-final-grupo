@@ -22,7 +22,7 @@ export class BancoDeDados {
   }
 
   buscarPorId(id: number): Pessoa {
-    if (id < 0) {
+    if (id < 0 && this._listaDePessoas.length) {
       throw Error('Indice inválido');
     }
     const pessoa = this._listaDePessoas[id];
@@ -56,10 +56,11 @@ export class BancoDeDados {
       console.error(`\nPessoa "${nome}" não encontrada`);
     } else {
       console.log(
-        `\nEncontrado pessoa com nome "${nome}". Imprimindo dados do cadastro..:`
+        `\nEncontrado pessoa com nome "${nome}". Imprimindo dados do cadastro..:\n${JSON.stringify(pessoa)}`
       );
+      return pessoa
     }
-    return pessoa;
+    
   }
 
   atualizar(pessoa: Pessoa): boolean {
