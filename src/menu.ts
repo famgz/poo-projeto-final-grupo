@@ -97,12 +97,15 @@ export class Menu extends ListaMenu{
 }
 
 
-private pedirDadosAtualizar():Pessoa{
+private pedirDadosAtualizar(){
   const prompt = promptSync()
-  const novoNome : string = String(prompt("Informe o novo nome"))
-  const novaIdade : number = Number(prompt("Informe a nova idade"))
-  const novoEmail : string  = String(prompt("Informe o novo email"))
-  return new Pessoa(novoNome,novaIdade,novoEmail)
+  const novoNome : string = String(prompt("Informe o novo nome: "))
+  const novaIdade : number = Number(prompt("Informe a nova idade: "))
+  const novoEmail : string  = String(prompt("Informe o novo email: "))
+  const pessoaAtualizada : Pessoa = new Pessoa(novoNome,novaIdade,novoEmail)
+
+return pessoaAtualizada
+  
 
 
 
