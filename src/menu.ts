@@ -193,27 +193,22 @@ export class Menu extends ListaMenu {
       }
 
       switch (escolha) {
-        // Adicionar
         case 1:
           this.opcaoAdicionar();
           break;
 
-        // Listar
         case 2:
           this._bancoDeDados.listar();
           break;
 
-        // Buscar pelo nome
         case 3:
           this.opcaoBuscarPeloNome();
           break;
 
-        // Atualizar
         case 4:
           this.opcaoAtualizar();
           break;
 
-        // Deletar
         case 5:
           this.opcaoDeletar();
           break;
