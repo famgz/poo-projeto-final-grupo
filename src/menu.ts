@@ -4,26 +4,33 @@ import { Pessoa } from './pessoa';
 
 const prompt = promptSync();
 
+class InputLoopError extends Error {
+  constructor(message: string = '') {
+    super(message);
+    this.name = 'InputLoopError';
+  }
+}
+
 abstract class ListaMenu {
   _lista: string;
 
   constructor() {
-    this._lista = `
-    1 - Adicionar 
-    2 - Listar
-    3 - Buscar pelo nome 
-    4 - Atualizar 
-    5 - Deletar 
+    this._lista = `Menu de Opções:
+  1 - Adicionar 
+  2 - Listar
+  3 - Buscar pelo nome 
+  4 - Atualizar 
+  5 - Deletar 
     `;
   }
 
   mostrarTitulo(): void {
-    console.log('-- BANCO DE DADOS DE PESSOAS --');
+    console.log('-- BANCO DE DADOS DE PESSOAS --\n');
   }
 
   mostrarMenu(): void {
     this.mostrarTitulo();
-    console.log('Menu de Opções');
+    // console.log('Menu de Opções:');
     console.log(this._lista);
   }
 
@@ -36,6 +43,38 @@ export class Menu extends ListaMenu {
   constructor(bancoDeDados: BancoDeDados) {
     super();
     this._bancoDeDados = bancoDeDados;
+  }
+
+  private pedirIndexAoUsuario(): number {
+    let index: number = -1;
+    const maxIndex = this._bancoDeDados.qtdePessoas - 1;
+
+    while (true) {
+      this._bancoDeDados.listar();
+
+      const res = prompt(
+        'Informe o index da Pessoa: ("q" para voltar ao menu)'.trim()
+      );
+      if (res.toLowerCase() === 'q') {
+        throw new InputLoopError();
+      }
+
+      index = parseInt(res);
+      if (isNaN(index) || index < 0 || index > maxIndex) {
+        console.clear();
+        console.log('Informe um index válido!\n');
+        continue;
+      }
+      return index;
+    }
+  }
+
+  private pedirDadosAtualizar() {
+    const novoNome: string = String(prompt('Informe o novo nome: '));
+    const novaIdade: number = Number(prompt('Informe a nova idade: '));
+    const novoEmail: string = String(prompt('Informe o novo email: '));
+    const pessoaAtualizada: Pessoa = new Pessoa(novoNome, novaIdade, novoEmail);
+    return pessoaAtualizada;
   }
 
   iniciarAplicacao(): void {
@@ -63,61 +102,70 @@ export class Menu extends ListaMenu {
       }
 
       switch (escolha) {
+        // Adicionar
         case 1:
           const nome = prompt('Informe o nome: ');
           const idade = Number(prompt('Informe a idade: '));
           const email = prompt('Informe o email: ');
           const pessoa = new Pessoa(nome, idade, email);
           this._bancoDeDados.adicionar(pessoa);
-
           break;
 
+        // Listar
         case 2:
           this._bancoDeDados.listar();
-
           break;
 
+        // Buscar pelo nome
         case 3:
-          const buscarNome: string = prompt('Informe o nome.: ');
-          this._bancoDeDados.buscarPeloNome(buscarNome);
+          const nomeAPesquisar: string = prompt('Informe o nome.: ');
+          const pessoaPeloNome =
+            this._bancoDeDados.buscarPeloNome(nomeAPesquisar);
+          if (!pessoaPeloNome) {
+            console.log(`Pessoa com nome ${nomeAPesquisar} não encontrada.`);
+          } else {
+            console.table([pessoaPeloNome]);
+          }
           break;
 
+        // Atualizar
         case 4:
-          const pessoaAntiga = this._bancoDeDados.buscarPorId(this.pedirId());
-          const pessoaNova = this.pedirDadosAtualizar();
-          this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
+          if (!this._bancoDeDados.qtdePessoas) {
+            console.log('Lista de pessoas está vazia. Tente adicionar.');
+            break;
+          }
+          try {
+            const pessoaAntiga = this._bancoDeDados.buscarPorId(
+              this.pedirIndexAoUsuario()
+            );
+            const pessoaNova = this.pedirDadosAtualizar();
+            this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
+          } catch (err) {
+            if (err instanceof InputLoopError) {
+              console.log('Voltando ao Menu');
+            } else {
+              console.error(err);
+            }
+          } finally {
+            break;
+          }
 
-          break;
-
+        // Deletar
         case 5:
-          const pessoaDeletar = this._bancoDeDados.buscarPorId(this.pedirId());
+          if (!this._bancoDeDados.qtdePessoas) {
+            console.log('Lista de pessoas está vazia. Tente adicionar.');
+            break;
+          }
+          const pessoaDeletar = this._bancoDeDados.buscarPorId(
+            this.pedirIndexAoUsuario()
+          );
           this._bancoDeDados.deletar(pessoaDeletar);
-
           break;
 
         default:
-          throw Error(
-            'Erro interno. problema em chamar os métodos, reveja o switch'
-          );
+          console.error('Opção inválida.');
       }
       prompt('Aperte ENTER para voltar ao menu');
     }
-  }
-
-  private pedirId(): number {
-    const prompt = promptSync();
-    console.log(`Usuário cadastrados:\n`);
-    this._bancoDeDados.listar();
-    const entrada = Number(prompt('Informe o Id: '));
-    return entrada;
-  }
-
-  private pedirDadosAtualizar() {
-    const prompt = promptSync();
-    const novoNome: string = String(prompt('Informe o novo nome: '));
-    const novaIdade: number = Number(prompt('Informe a nova idade: '));
-    const novoEmail: string = String(prompt('Informe o novo email: '));
-    const pessoaAtualizada: Pessoa = new Pessoa(novoNome, novaIdade, novoEmail);
-    return pessoaAtualizada;
   }
 }
