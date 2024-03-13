@@ -6,9 +6,19 @@ informações de pessoas;
 Para a execução desta tarefa, vocês precisam ter 3 classes: BancoDeDados, Pessoa e um
 Menu;
 
+## Como rodar o projeto
+1. Instalar dependências
+```
+npm install
+```
+2. Rodar o projeto
+```
+npm start
+```
+
 ## Equipe:
 
-✅ Grupo 4 -
+✅ Grupo 2 -
 
 Ana Westhpal: [@anawesthpal](https://github.com/anawesthpal)
 
@@ -16,23 +26,6 @@ João Saraiva: [@jsaraivasapori](https://github.com/jsaraivasapori)
 
 Fillipe Miranda: [@famgz](https://github.com/famgz)
 
-# Projeto final do módulo POO - Simulação de Banco de Dados
-
-A idéia do projeto é simples: vocês devem criar um banco de dados ao qual vamos armazenar
-informações de pessoas;
-
-Para a execução desta tarefa, vocês precisam ter 3 classes: BancoDeDados, Pessoa e um
-Menu;
-
-## Equipe:
-
-✅ Grupo 4 -
-
-Ana Westhpal: [@anawesthpal](https://github.com/anawesthpal)
-
-João Saraiva: [@jsaraivasapori](https://github.com/jsaraivasapori)
-
-Fillipe Miranda: [@famgz](https://github.com/famgz)
 
 **SIMULAÇÃO DE BANCO DE DADOS**
 
@@ -58,12 +51,3 @@ A classe Pessoa deverá ter apenas os atributos de nome, idade e email. Em seu c
 
 Por fim, teremos a classe Menu, onde vocês vão criar um menu simples e, cada funcionalidade do menu, será o que o banco de dados de vocês consegue fazer: Uma funcionalidade de listar todas as pessoas, uma funcionalidade de adicionar uma pessoa, uma de atualizar, uma de buscar pelo nome e uma de deletar uma pessoa do banco;
 
-Todos os trios vão se apresentar em sala de aula, na quarta-feira, tanto o projeto funcional como o seu código implementado;
-
-Todos do trio devem participar tanto na execução do projeto quanto na apresentação pois, a avaliação além da equipe, será também feita de forma individual;
-
-O projeto deverá ser entregue, ao fim da apresentação ou no github (quem já tiver o conhecimento e conseguir subir para o mesmo) ou, poderá ser feito um arquivo zipado e enviado para o meu e-mail: <l.grodriguesjr@gmail.com> até a quarta-feira, antes da aula;
-
-EXTRAS OPCIONAIS:
-
-\- Quem quiser e se sentir confortável, poderá criar o projeto utilizando typescript;
