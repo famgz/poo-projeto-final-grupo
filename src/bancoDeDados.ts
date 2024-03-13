@@ -36,7 +36,7 @@ export class BancoDeDados {
       return false;
     }
     this._listaDePessoas.push(pessoa);
-    console.log(`Pessoa ${pessoa.nome} adicionada com sucesso!`);
+    console.log(`\nPessoa ${pessoa.nome} adicionada com sucesso!`);
     return true;
   }
 
@@ -63,13 +63,16 @@ export class BancoDeDados {
     
   }
 
-  atualizar(pessoa: Pessoa): boolean {
-    const index = this._obterIndicePessoa(pessoa);
-    if (!index) {
+  atualizar(pessoaAntiga: Pessoa, pessoaNova:Pessoa ): boolean {
+    const index = this._obterIndicePessoa(pessoaAntiga); 
+    /*    if (index === -1) {
       console.error('Atualização não executada');
       return false;
-    }
-    this._listaDePessoas[index] = pessoa;
+     }*/
+     this._listaDePessoas[index].nome = pessoaNova.nome
+     this._listaDePessoas[index].idade = pessoaNova.idade
+     this._listaDePessoas[index].email = pessoaNova.email
+     console.log(`Alteração realizada com sucesso.`)
     return true;
   }
 
