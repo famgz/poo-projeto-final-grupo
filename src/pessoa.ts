@@ -5,7 +5,16 @@ export class Pessoa {
 
   constructor(nome: string, idade: number, email: string) {
     if (this.nomeInvalido(nome)) {
+      // throw new Error(`Erro: O nome deve ter no mínimo 3 caracteres.`);
       throw new Error(`Nome inválido: ${nome}`);
+    }
+    if (this.idadeInvalida(idade)) {
+      // throw new Error(`Idade inválida: ${idade}`);
+      throw new Error(`Idade inválida.`);
+    }
+    if (this.emailInvalido(email)) {
+      // throw new Error(`Email inválido: ${email}`);
+      throw new Error(`Email inválido.`);
     }
     this._nome = nome;
     this._idade = idade;
@@ -23,33 +32,27 @@ export class Pessoa {
   get email(): string {
     return this._email;
   }
-
-  set nome(novoNome: string) {
-    this._nome = novoNome;
-  }
-
-  set idade(novaIdade: number) {
-    this._idade = novaIdade;
-  }
-
-  set email(novoEmail: string) {
-    this._email = novoEmail;
-  }
-
-  private ehNumero(letra: string): boolean {
-    return !isNaN(parseInt(letra));
-  }
-
   private nomeInvalido(nome: string) {
-    if (nome.length < 4) {
-      console.error('Erro: Nome deve ao menos 4 caracteres');
+    if (nome.length <= 3 || /\d/.test(nome)) {
+      console.error("Erro: Nome deve ao menos 3 caracteres ou conter caracteres numéricos");
       return true;
     }
-    for (const letra of nome) {
-      if (this.ehNumero(letra)) {
-        console.error('Erro: Nome não pode conter caracteres numéricos');
-        return true;
-      }
+    return false;
+  }
+  
+  private idadeInvalida(idade: number): boolean{
+    if ( idade < 0 || idade > 110) {
+      console.error("Erro: Idade deve estar no intervalo de 0 a 110 anos");
+      return true;
+    }
+      return false;
+  }
+
+  private emailInvalido(email: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      console.error("Erro: Email inválido");
+      return false;
     }
     return false;
   }
