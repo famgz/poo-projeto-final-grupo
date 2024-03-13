@@ -1,6 +1,6 @@
 import promptSync from 'prompt-sync';
 import { BancoDeDados } from './bancoDeDados';
-import { Pessoa } from './pessoa';
+import { IDadosPessoa, Pessoa } from './pessoa';
 
 const prompt = promptSync();
 
@@ -12,9 +12,11 @@ class ExitLoopError extends Error {
 }
 
 abstract class ListaMenu {
+  _titulo: string;
   _lista: string;
 
-  constructor() {
+  constructor(titulo: string) {
+    this._titulo = titulo;
     this._lista = `
 Menu de Opções:
 1 - Adicionar 
@@ -25,7 +27,7 @@ Menu de Opções:
   }
 
   mostrarTitulo(): void {
-    console.log('-- BANCO DE DADOS DE PESSOAS --');
+    console.log(`-- ${this._titulo} --`);
   }
 
   mostrarMenu(): void {
@@ -33,25 +35,31 @@ Menu de Opções:
     console.log(this._lista);
   }
 
-  abstract iniciarAplicacao(): void;
+  abstract iniciar(): void;
 }
 
 export class Menu extends ListaMenu {
-  private _bancoDeDados: BancoDeDados;
+  private db: BancoDeDados;
 
   constructor(bancoDeDados: BancoDeDados) {
-    super();
-    this._bancoDeDados = bancoDeDados;
+    super('BANCO DE DADOS DE PESSOAS');
+    this.db = bancoDeDados;
   }
 
-  private pedirOpcaoMenu(): number {
+  private listaEstaVazia(): boolean {
+    return !this.db.qtdePessoas;
+  }
+
+  private promptOpcaoMenu(): number {
     let escolha;
 
     while (true) {
       this.mostrarMenu();
       console.log();
 
-      const res = prompt('Digite uma opção (ou "q" para sair): ').trim();
+      const res = prompt(
+        'Digite uma opção do menu (ou "q" para sair): '
+      ).trim();
 
       if (res.toLowerCase() === 'q') {
         throw new ExitLoopError();
@@ -61,7 +69,7 @@ export class Menu extends ListaMenu {
 
       if (isNaN(escolha) || escolha < 1 || escolha > 5) {
         console.clear();
-        console.log('Opção inválida!\n');
+        console.error('* Opção inválida!\n');
         continue;
       }
       break;
@@ -69,12 +77,12 @@ export class Menu extends ListaMenu {
     return escolha;
   }
 
-  private pedirIndexPessoa(): number {
+  private promptIndexPessoa(): number {
     let index: number = -1;
-    const maxIndex = this._bancoDeDados.qtdePessoas - 1;
+    const maxIndex = this.db.qtdePessoas - 1;
 
     while (true) {
-      this._bancoDeDados.listar();
+      this.db.listar();
 
       const res = prompt(
         'Digite o index da Pessoa (ou "q" para voltar ao menu): '
@@ -87,67 +95,72 @@ export class Menu extends ListaMenu {
       index = parseInt(res);
       if (isNaN(index) || index < 0 || index > maxIndex) {
         console.clear();
-        console.log('Index inválido!\n');
+        console.log('* Index inválido!\n');
         continue;
       }
       return index;
     }
   }
 
-  private pedirDadosAtualizar() {
-    const novoNome: string = String(prompt('Informe o novo nome: '));
-    const novaIdade: number = Number(prompt('Informe a nova idade: '));
-    const novoEmail: string = String(prompt('Informe o novo email: '));
-    const pessoaAtualizada: Pessoa = new Pessoa(novoNome, novaIdade, novoEmail);
-    return pessoaAtualizada;
-  }
-
-  private listaEstaVazia(): boolean {
-    const estaVazia = !this._bancoDeDados.qtdePessoas;
-    if (estaVazia) {
-      console.log('Lista de pessoas está vazia. Tente adicionar.');
-      return true;
-    }
-    return false;
+  private promptDadosPessoa(atualizar: boolean = false): IDadosPessoa {
+    const sufixo = atualizar
+      ? ' (ou deixe vazio caso não queira alterar): '
+      : ':';
+    const nome = prompt(`Informe o nome${sufixo} `).trim();
+    const idade = parseInt(prompt(`Informe a idade${sufixo} `).trim());
+    const email = prompt(`Informe o email${sufixo} `).trim();
+    return {
+      nome,
+      idade,
+      email,
+    };
   }
 
   private opcaoAdicionar(): boolean {
-    const nome = prompt('Informe o nome: ');
-    const idade = Number(prompt('Informe a idade: '));
-    const email = prompt('Informe o email: ');
-    const pessoa = new Pessoa(nome, idade, email);
-    this._bancoDeDados.adicionar(pessoa);
+    try {
+      const dados = this.promptDadosPessoa();
+      const pessoa = new Pessoa(dados.nome, dados.idade, dados.email);
+      const adicionado = this.db.adicionar(pessoa);
+      if (!adicionado) {
+        return false;
+      }
+    } catch (err) {
+      if (err instanceof ExitLoopError) {
+        console.log('Operação cancelada');
+      } else if (err instanceof TypeError) {
+        console.error(err.message);
+      } else {
+        console.error(err);
+        return false;
+      }
+    }
     return true;
   }
 
   private opcaoBuscarPeloNome(): boolean {
-    if (this.listaEstaVazia()) {
-      return false;
-    }
-    const nomeAPesquisar: string = prompt('Informe o nome.: ');
-    const pessoaPeloNome = this._bancoDeDados.buscarPeloNome(nomeAPesquisar);
-    if (!pessoaPeloNome) {
-      console.log(`Pessoa com nome ${nomeAPesquisar} não encontrada.`);
+    const nome = prompt('Informe o nome da Pessoa para pesquisa: ').trim();
+    const pessoa = this.db.buscarPorNome(nome);
+    if (!pessoa) {
+      console.clear();
+      console.log(`* Pessoa com nome ${nome} não encontrada.`);
       return false;
     } else {
-      console.table([pessoaPeloNome]);
+      console.log('Pessoa encontrada! Imprimindo dados do cadastro...');
+      console.table([pessoa]);
       return true;
     }
   }
 
   private opcaoAtualizar(): boolean {
-    if (this.listaEstaVazia()) {
-      return false;
-    }
     try {
-      const pessoaAntiga = this._bancoDeDados.buscarPorId(
-        this.pedirIndexPessoa()
-      );
-      const pessoaNova = this.pedirDadosAtualizar();
-      this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
+      const index = this.promptIndexPessoa();
+      const dados = this.promptDadosPessoa(true);
+      this.db.atualizar(index, dados);
     } catch (err) {
       if (err instanceof ExitLoopError) {
         console.log('Operação cancelada');
+      } else if (err instanceof TypeError) {
+        console.error(err.message);
       } else {
         console.error(err);
         return false;
@@ -157,15 +170,9 @@ export class Menu extends ListaMenu {
   }
 
   private opcaoDeletar(): boolean {
-    if (this.listaEstaVazia()) {
-      return false;
-    }
-
     try {
-      const pessoaDeletar = this._bancoDeDados.buscarPorId(
-        this.pedirIndexPessoa()
-      );
-      this._bancoDeDados.deletar(pessoaDeletar);
+      const index = this.promptIndexPessoa();
+      this.db.deletar(index);
     } catch (err) {
       if (err instanceof ExitLoopError) {
         console.log('Operação cancelada');
@@ -177,12 +184,14 @@ export class Menu extends ListaMenu {
     return true;
   }
 
-  iniciarAplicacao(): void {
+  iniciar(): void {
+    console.clear();
+
     while (true) {
       let escolha: number;
 
       try {
-        escolha = this.pedirOpcaoMenu();
+        escolha = this.promptOpcaoMenu();
       } catch (err) {
         if (err instanceof ExitLoopError) {
           console.log('Programa finalizado');
@@ -192,13 +201,21 @@ export class Menu extends ListaMenu {
         return;
       }
 
+      if (escolha !== 1 && this.listaEstaVazia()) {
+        console.clear();
+        console.error(
+          '\n* Lista de pessoas está vazia. Tente adicionar entradas.\n'
+        );
+        continue;
+      }
+
       switch (escolha) {
         case 1:
           this.opcaoAdicionar();
           break;
 
         case 2:
-          this._bancoDeDados.listar();
+          this.db.listar();
           break;
 
         case 3:
@@ -214,9 +231,12 @@ export class Menu extends ListaMenu {
           break;
 
         default:
-          console.error('Opção inválida.');
+          console.clear();
+          console.error('* Opção inválida.');
       }
+
       prompt('Aperte ENTER para voltar ao menu...');
+      console.clear();
     }
   }
 }
