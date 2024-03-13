@@ -2,6 +2,8 @@ import promptSync from 'prompt-sync';
 import { BancoDeDados } from './bancoDeDados';
 import { Pessoa } from './pessoa';
 
+const prompt = promptSync();
+
 abstract class ListaMenu {
   _lista: string;
 
@@ -15,11 +17,17 @@ abstract class ListaMenu {
     `;
   }
 
+  mostrarTitulo(): void {
+    console.log('-- BANCO DE DADOS DE PESSOAS --');
+  }
+
   mostrarMenu(): void {
+    this.mostrarTitulo();
+    console.log('Menu de Opções');
     console.log(this._lista);
   }
 
-  abstract exibirMenu(): void;
+  abstract iniciarAplicacao(): void;
 }
 
 export class Menu extends ListaMenu {
@@ -30,11 +38,9 @@ export class Menu extends ListaMenu {
     this._bancoDeDados = bancoDeDados;
   }
 
-  exibirMenu(): void {
+  iniciarAplicacao(): void {
     while (true) {
       let escolha: null | number = null;
-      const prompt = promptSync();
-
       do {
         console.clear();
         this.mostrarMenu();
