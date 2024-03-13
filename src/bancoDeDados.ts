@@ -75,11 +75,12 @@ export class BancoDeDados {
 
   deletar(pessoa: Pessoa): boolean {
     const index = this._obterIndicePessoa(pessoa);
-    if (!index) {
+    if (index === -1) {
       console.error('Exclusão não executada');
       return false;
-    }
+     }
     this._listaDePessoas.splice(index, 1);
+    console.log(`Exclusão de ${pessoa.nome} realizada com sucesso.`)
     return true;
   }
 }
