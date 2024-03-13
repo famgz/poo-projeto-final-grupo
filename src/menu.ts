@@ -15,22 +15,21 @@ abstract class ListaMenu {
   _lista: string;
 
   constructor() {
-    this._lista = `Menu de Opções:
-  1 - Adicionar 
-  2 - Listar
-  3 - Buscar pelo nome 
-  4 - Atualizar 
-  5 - Deletar 
-    `;
+    this._lista = `
+Menu de Opções:
+1 - Adicionar 
+2 - Listar
+3 - Buscar pelo nome 
+4 - Atualizar 
+5 - Deletar`;
   }
 
   mostrarTitulo(): void {
-    console.log('-- BANCO DE DADOS DE PESSOAS --\n');
+    console.log('-- BANCO DE DADOS DE PESSOAS --');
   }
 
   mostrarMenu(): void {
     this.mostrarTitulo();
-    // console.log('Menu de Opções:');
     console.log(this._lista);
   }
 
@@ -53,8 +52,9 @@ export class Menu extends ListaMenu {
       this._bancoDeDados.listar();
 
       const res = prompt(
-        'Informe o index da Pessoa: ("q" para voltar ao menu)'.trim()
-      );
+        'Digite o index da Pessoa (ou "q" para voltar ao menu): '
+      ).trim();
+
       if (res.toLowerCase() === 'q') {
         throw new InputLoopError();
       }
@@ -62,7 +62,7 @@ export class Menu extends ListaMenu {
       index = parseInt(res);
       if (isNaN(index) || index < 0 || index > maxIndex) {
         console.clear();
-        console.log('Informe um index válido!\n');
+        console.log('Index inválido!\n');
         continue;
       }
       return index;
@@ -77,38 +77,110 @@ export class Menu extends ListaMenu {
     return pessoaAtualizada;
   }
 
+  private listaEstaVazia(): boolean {
+    const estaVazia = !this._bancoDeDados.qtdePessoas;
+    if (estaVazia) {
+      console.log('Lista de pessoas está vazia. Tente adicionar.');
+      return true;
+    }
+    return false;
+  }
+
+  private opcaoAdicionar(): boolean {
+    const nome = prompt('Informe o nome: ');
+    const idade = Number(prompt('Informe a idade: '));
+    const email = prompt('Informe o email: ');
+    const pessoa = new Pessoa(nome, idade, email);
+    this._bancoDeDados.adicionar(pessoa);
+    return true;
+  }
+
+  private opcaoBuscarPeloNome(): boolean {
+    if (this.listaEstaVazia()) {
+      return false;
+    }
+    const nomeAPesquisar: string = prompt('Informe o nome.: ');
+    const pessoaPeloNome = this._bancoDeDados.buscarPeloNome(nomeAPesquisar);
+    if (!pessoaPeloNome) {
+      console.log(`Pessoa com nome ${nomeAPesquisar} não encontrada.`);
+      return false;
+    } else {
+      console.table([pessoaPeloNome]);
+      return true;
+    }
+  }
+
+  private opcaoAtualizar(): boolean {
+    if (this.listaEstaVazia()) {
+      return false;
+    }
+    try {
+      const pessoaAntiga = this._bancoDeDados.buscarPorId(
+        this.pedirIndexAoUsuario()
+      );
+      const pessoaNova = this.pedirDadosAtualizar();
+      this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
+    } catch (err) {
+      if (err instanceof InputLoopError) {
+        console.log('Operação cancelada');
+      } else {
+        console.error(err);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private opcaoDeletar(): boolean {
+    if (this.listaEstaVazia()) {
+      return false;
+    }
+
+    try {
+      const pessoaDeletar = this._bancoDeDados.buscarPorId(
+        this.pedirIndexAoUsuario()
+      );
+      this._bancoDeDados.deletar(pessoaDeletar);
+    } catch (err) {
+      if (err instanceof InputLoopError) {
+        console.log('Operação cancelada');
+      } else {
+        console.error(err);
+        return false;
+      }
+    }
+    return true;
+  }
+
   iniciarAplicacao(): void {
     while (true) {
-      let escolha: null | number = null;
-      do {
-        console.clear();
+      let escolha = -1;
+
+      while (true) {
         this.mostrarMenu();
         console.log();
 
-        escolha = Number(
-          prompt('Escolhe uma opção. Digite 0 caso queira sair: '.trim())
-        );
+        const res = prompt('Digite uma opção (ou "q" para sair): ').trim();
 
-        if (escolha > 5 || escolha < 1) {
+        if (res.toLowerCase() === 'q') {
+          console.log('Aplicação finalizada');
+          return;
+        }
+
+        escolha = parseInt(res);
+
+        if (isNaN(escolha) || escolha < 1 || escolha > 5) {
+          console.clear();
+          console.log('Opção inválida!\n');
           continue;
         }
-        if (isNaN(escolha)) {
-          continue;
-        }
-      } while (escolha === null);
-
-      if (escolha === 0) {
-        return;
+        break;
       }
 
       switch (escolha) {
         // Adicionar
         case 1:
-          const nome = prompt('Informe o nome: ');
-          const idade = Number(prompt('Informe a idade: '));
-          const email = prompt('Informe o email: ');
-          const pessoa = new Pessoa(nome, idade, email);
-          this._bancoDeDados.adicionar(pessoa);
+          this.opcaoAdicionar();
           break;
 
         // Listar
@@ -118,54 +190,23 @@ export class Menu extends ListaMenu {
 
         // Buscar pelo nome
         case 3:
-          const nomeAPesquisar: string = prompt('Informe o nome.: ');
-          const pessoaPeloNome =
-            this._bancoDeDados.buscarPeloNome(nomeAPesquisar);
-          if (!pessoaPeloNome) {
-            console.log(`Pessoa com nome ${nomeAPesquisar} não encontrada.`);
-          } else {
-            console.table([pessoaPeloNome]);
-          }
+          this.opcaoBuscarPeloNome();
           break;
 
         // Atualizar
         case 4:
-          if (!this._bancoDeDados.qtdePessoas) {
-            console.log('Lista de pessoas está vazia. Tente adicionar.');
-            break;
-          }
-          try {
-            const pessoaAntiga = this._bancoDeDados.buscarPorId(
-              this.pedirIndexAoUsuario()
-            );
-            const pessoaNova = this.pedirDadosAtualizar();
-            this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
-          } catch (err) {
-            if (err instanceof InputLoopError) {
-              console.log('Voltando ao Menu');
-            } else {
-              console.error(err);
-            }
-          } finally {
-            break;
-          }
+          this.opcaoAtualizar();
+          break;
 
         // Deletar
         case 5:
-          if (!this._bancoDeDados.qtdePessoas) {
-            console.log('Lista de pessoas está vazia. Tente adicionar.');
-            break;
-          }
-          const pessoaDeletar = this._bancoDeDados.buscarPorId(
-            this.pedirIndexAoUsuario()
-          );
-          this._bancoDeDados.deletar(pessoaDeletar);
+          this.opcaoDeletar();
           break;
 
         default:
           console.error('Opção inválida.');
       }
-      prompt('Aperte ENTER para voltar ao menu');
+      prompt('Aperte ENTER para voltar ao menu...');
     }
   }
 }
