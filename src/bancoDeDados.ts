@@ -1,4 +1,4 @@
-import { Pessoa } from './pessoa';
+import { IDadosPessoa, Pessoa } from './pessoa';
 
 export class BancoDeDados {
   private _listaDePessoas: Pessoa[];
@@ -11,18 +11,16 @@ export class BancoDeDados {
     return this._listaDePessoas.length;
   }
 
-  private _buscarPeloNome(nome: string): Pessoa | undefined {
+  buscarPorNome(nome: string): Pessoa | undefined {
     return this._listaDePessoas.find(
       (alvo) => alvo.nome.toLowerCase() === nome.toLowerCase()
     );
   }
 
-  private _obterIndicePessoa(pessoa: Pessoa): number {
-    const index = this._listaDePessoas.indexOf(pessoa);
-    if (index === -1) {
-      console.error(`\nPessoa "${pessoa.nome}" não encontrada`);
-    }
-    return index;
+  buscarPorEmail(email: string): Pessoa | undefined {
+    return this._listaDePessoas.find(
+      (alvo) => alvo.email.toLowerCase() === email.toLowerCase()
+    );
   }
 
   buscarPorId(id: number): Pessoa {
@@ -33,19 +31,8 @@ export class BancoDeDados {
     return pessoa;
   }
 
-  adicionar(pessoa: Pessoa): boolean {
-    const pessoaExiste = this._buscarPeloNome(pessoa.nome);
-    if (pessoaExiste) {
-      console.error(`${pessoa} já existe`);
-      return false;
-    }
-    this._listaDePessoas.push(pessoa);
-    console.log(`\nPessoa ${pessoa.nome} adicionada com sucesso!`);
-    return true;
-  }
-
   listar(): void {
-    console.log('PESSOAS CADASTRADAS');
+    console.log('\nPESSOAS CADASTRADAS');
     const printObj = this._listaDePessoas.map((p) => ({
       nome: p.nome,
       idade: p.idade,
@@ -54,37 +41,51 @@ export class BancoDeDados {
     console.table(printObj);
   }
 
-  buscarPeloNome(nome: string): Pessoa | undefined {
-    const pessoa = this._buscarPeloNome(nome);
-    if (!pessoa) {
-      console.error(`\nPessoa "${nome}" não encontrada`);
-    } else {
-      console.log(
-        `\nEncontrado pessoa com nome "${nome}". Imprimindo dados do cadastro..:\n${JSON.stringify(
-          pessoa
-        )}`
-      );
-      return pessoa;
-    }
-  }
-
-  atualizar(pessoaAntiga: Pessoa, pessoaNova: Pessoa): boolean {
-    const index = this._obterIndicePessoa(pessoaAntiga);
-    /*    if (index === -1) {
-      console.error('Atualização não executada');
+  adicionar(pessoa: Pessoa): boolean {
+    const nomeExiste = this.buscarPorNome(pessoa.nome);
+    if (nomeExiste) {
+      console.error(`* Pessoa com nome "${pessoa.nome}" já existe!`);
       return false;
-     }*/
-    this._listaDePessoas[index].nome = pessoaNova.nome;
-    this._listaDePessoas[index].idade = pessoaNova.idade;
-    this._listaDePessoas[index].email = pessoaNova.email;
-    console.log(`Alteração realizada com sucesso.`);
+    }
+    const emailExiste = this.buscarPorEmail(pessoa.email);
+    if (emailExiste) {
+      console.error(`* Pessoa com email "${pessoa.email}" já existe!`);
+      return false;
+    }
+    this._listaDePessoas.push(pessoa);
+    console.log(`\nPessoa "${pessoa.nome}" adicionada com sucesso!`);
     return true;
   }
 
-  deletar(pessoa: Pessoa): boolean {
-    const index = this._obterIndicePessoa(pessoa);
-    if (index === -1) {
-      console.error('Exclusão não executada');
+  atualizar(index: number, dados: IDadosPessoa): boolean {
+    const pessoa = this._listaDePessoas[index];
+    if (!pessoa) {
+      console.error('* O índice informado é inválido.');
+      return false;
+    }
+    if (!Object.values(dados).some(Boolean)) {
+      console.error('* Não há dados para atualizar.');
+      return false;
+    }
+    if (dados.nome) {
+      pessoa.nome = dados.nome;
+    }
+    if (dados.idade) {
+      pessoa.idade = dados.idade;
+    }
+    if (dados.email) {
+      pessoa.email = dados.email;
+    }
+    console.log(
+      `\nPessoa "${pessoa.nome || dados.nome}" atualizada com sucesso!`
+    );
+    return true;
+  }
+
+  deletar(index: number): boolean {
+    const pessoa = this._listaDePessoas[index];
+    if (!pessoa) {
+      console.error('* O índice informado é inválido. Tente novamente');
       return false;
     }
     this._listaDePessoas.splice(index, 1);
