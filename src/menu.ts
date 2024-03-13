@@ -4,7 +4,7 @@ import { Pessoa } from './pessoa';
 
 const prompt = promptSync();
 
-class InputLoopError extends Error {
+class ExitLoopError extends Error {
   constructor(message: string = '') {
     super(message);
     this.name = 'InputLoopError';
@@ -44,7 +44,32 @@ export class Menu extends ListaMenu {
     this._bancoDeDados = bancoDeDados;
   }
 
-  private pedirIndexAoUsuario(): number {
+  private pedirOpcaoMenu(): number {
+    let escolha;
+
+    while (true) {
+      this.mostrarMenu();
+      console.log();
+
+      const res = prompt('Digite uma opção (ou "q" para sair): ').trim();
+
+      if (res.toLowerCase() === 'q') {
+        throw new ExitLoopError();
+      }
+
+      escolha = parseInt(res);
+
+      if (isNaN(escolha) || escolha < 1 || escolha > 5) {
+        console.clear();
+        console.log('Opção inválida!\n');
+        continue;
+      }
+      break;
+    }
+    return escolha;
+  }
+
+  private pedirIndexPessoa(): number {
     let index: number = -1;
     const maxIndex = this._bancoDeDados.qtdePessoas - 1;
 
@@ -56,7 +81,7 @@ export class Menu extends ListaMenu {
       ).trim();
 
       if (res.toLowerCase() === 'q') {
-        throw new InputLoopError();
+        throw new ExitLoopError();
       }
 
       index = parseInt(res);
@@ -116,12 +141,12 @@ export class Menu extends ListaMenu {
     }
     try {
       const pessoaAntiga = this._bancoDeDados.buscarPorId(
-        this.pedirIndexAoUsuario()
+        this.pedirIndexPessoa()
       );
       const pessoaNova = this.pedirDadosAtualizar();
       this._bancoDeDados.atualizar(pessoaAntiga, pessoaNova);
     } catch (err) {
-      if (err instanceof InputLoopError) {
+      if (err instanceof ExitLoopError) {
         console.log('Operação cancelada');
       } else {
         console.error(err);
@@ -138,11 +163,11 @@ export class Menu extends ListaMenu {
 
     try {
       const pessoaDeletar = this._bancoDeDados.buscarPorId(
-        this.pedirIndexAoUsuario()
+        this.pedirIndexPessoa()
       );
       this._bancoDeDados.deletar(pessoaDeletar);
     } catch (err) {
-      if (err instanceof InputLoopError) {
+      if (err instanceof ExitLoopError) {
         console.log('Operação cancelada');
       } else {
         console.error(err);
@@ -154,27 +179,17 @@ export class Menu extends ListaMenu {
 
   iniciarAplicacao(): void {
     while (true) {
-      let escolha = -1;
+      let escolha: number;
 
-      while (true) {
-        this.mostrarMenu();
-        console.log();
-
-        const res = prompt('Digite uma opção (ou "q" para sair): ').trim();
-
-        if (res.toLowerCase() === 'q') {
-          console.log('Aplicação finalizada');
-          return;
+      try {
+        escolha = this.pedirOpcaoMenu();
+      } catch (err) {
+        if (err instanceof ExitLoopError) {
+          console.log('Programa finalizado');
+        } else {
+          console.error(err);
         }
-
-        escolha = parseInt(res);
-
-        if (isNaN(escolha) || escolha < 1 || escolha > 5) {
-          console.clear();
-          console.log('Opção inválida!\n');
-          continue;
-        }
-        break;
+        return;
       }
 
       switch (escolha) {
