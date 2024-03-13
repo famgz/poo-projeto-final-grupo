@@ -7,6 +7,10 @@ export class BancoDeDados {
     this._listaDePessoas = [];
   }
 
+  get qtdePessoas(): number {
+    return this._listaDePessoas.length;
+  }
+
   private _buscarPeloNome(nome: string): Pessoa | undefined {
     return this._listaDePessoas.find(
       (alvo) => alvo.nome.toLowerCase() === nome.toLowerCase()
@@ -56,23 +60,24 @@ export class BancoDeDados {
       console.error(`\nPessoa "${nome}" não encontrada`);
     } else {
       console.log(
-        `\nEncontrado pessoa com nome "${nome}". Imprimindo dados do cadastro..:\n${JSON.stringify(pessoa)}`
+        `\nEncontrado pessoa com nome "${nome}". Imprimindo dados do cadastro..:\n${JSON.stringify(
+          pessoa
+        )}`
       );
-      return pessoa
+      return pessoa;
     }
-    
   }
 
-  atualizar(pessoaAntiga: Pessoa, pessoaNova:Pessoa ): boolean {
-    const index = this._obterIndicePessoa(pessoaAntiga); 
+  atualizar(pessoaAntiga: Pessoa, pessoaNova: Pessoa): boolean {
+    const index = this._obterIndicePessoa(pessoaAntiga);
     /*    if (index === -1) {
       console.error('Atualização não executada');
       return false;
      }*/
-     this._listaDePessoas[index].nome = pessoaNova.nome
-     this._listaDePessoas[index].idade = pessoaNova.idade
-     this._listaDePessoas[index].email = pessoaNova.email
-     console.log(`Alteração realizada com sucesso.`)
+    this._listaDePessoas[index].nome = pessoaNova.nome;
+    this._listaDePessoas[index].idade = pessoaNova.idade;
+    this._listaDePessoas[index].email = pessoaNova.email;
+    console.log(`Alteração realizada com sucesso.`);
     return true;
   }
 
@@ -81,9 +86,9 @@ export class BancoDeDados {
     if (index === -1) {
       console.error('Exclusão não executada');
       return false;
-     }
+    }
     this._listaDePessoas.splice(index, 1);
-    console.log(`Exclusão de ${pessoa.nome} realizada com sucesso.`)
+    console.log(`Exclusão de ${pessoa.nome} realizada com sucesso.`);
     return true;
   }
 }
