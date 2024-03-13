@@ -1,7 +1,7 @@
 import { BancoDeDados } from './bancoDeDados';
 import { Menu } from './menu';
 
-const bancoDeDados = new BancoDeDados();
-const menu = new Menu(bancoDeDados);
+const db = new BancoDeDados();
+const menu = new Menu(db);
 
-menu.iniciarAplicacao();
+menu.iniciar();
