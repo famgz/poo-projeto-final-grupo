@@ -23,14 +23,6 @@ export class BancoDeDados {
     );
   }
 
-  buscarPorId(id: number): Pessoa {
-    if (id < 0 && this._listaDePessoas.length) {
-      throw Error('Indice inválido');
-    }
-    const pessoa = this._listaDePessoas[id];
-    return pessoa;
-  }
-
   listar(): void {
     console.log('\nPESSOAS CADASTRADAS');
     const printObj = this._listaDePessoas.map((p) => ({
